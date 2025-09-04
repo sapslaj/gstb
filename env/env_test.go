@@ -2,6 +2,7 @@ package env
 
 import (
 	"errors"
+	"net/url"
 	"testing"
 	"time"
 )
@@ -128,10 +129,18 @@ func TestGet(t *testing.T) {
 	TAssertNoError(t, err)
 	TAssertEqual(t, false, vBoolFalse)
 
+	// time.Duration
 	t.Setenv("TEST_DURATION", "5s")
 	vDuration, err := Get[time.Duration]("TEST_DURATION")
 	TAssertNoError(t, err)
 	TAssertEqual(t, 5*time.Second, vDuration)
+
+	// url.URL
+	t.Setenv("TEST_URL", "https://example.com")
+	vURL, err := Get[*url.URL]("TEST_URL")
+	TAssertNoError(t, err)
+	TAssertEqual(t, "https", vURL.Scheme)
+	TAssertEqual(t, "example.com", vURL.Host)
 
 	// Error cases
 

@@ -2,6 +2,7 @@ package env
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"reflect"
 	"strconv"
@@ -106,6 +107,12 @@ func Get[T any](name string) (T, error) {
 			return value, NewErrParsingWrapped(name, err)
 		}
 		elem.SetInt(int64(valueDuration))
+	case *url.URL:
+		valueURL, err := url.Parse(raw)
+		if err != nil {
+			return value, NewErrParsingWrapped(name, err)
+		}
+		elem.Set(reflect.ValueOf(valueURL))
 	default:
 		return value, NewErrUnsupportedType(name)
 	}
